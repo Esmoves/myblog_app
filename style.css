@@ -6,6 +6,40 @@ body{
 	background-color: #E5D4CE;
 }
 
+.container{
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+div.mainmenu{
+	font-variant: small-caps;
+	text-align: center;
+	display: inline-block;
+	align-items: center;
+}
+
+ul{
+	list-style-type: none;
+	display: inline-block;
+}
+
+.mainmenu li{
+	float: left;
+	border: 1px solid #E56399;
+	padding: 10px;
+	font-weight: bold;
+	background-color: #DE6E4B;
+	border-radius: 10px;
+}
+
+.mainmenu a{
+	color: white;
+}
+
+.mainmenu a:hover{
+	color: black;
+}
+
 h1{
 	font-family: 'Indie Flower', cursive;
 	color: #E56399;
@@ -16,34 +50,88 @@ h1{
 h2{
 	font-family: 'Roboto Mono', monospace;
 	color: #7A6563;
+	padding: 10px 0 20px 20px;
+	font-size: 1.2em;
+	display: inline-block;
 }
 
 h3{
-
+	font-family: 'Roboto Mono', monospace;
+	color: #7A6563;
+	font-size: 1em;
+	display: inline-block;
 }
 
 p{
 
 }
 
-table.excerp{
-	border-collapse: collapse;
-	border-width: 2px;
-	border-style: solid;
-	border-color: #7A6563;
-}
-th{
-	font-family: 'Roboto Mono', monospace;
-	color: #7A6563;
+a{
+	text-decoration: none;
+	color: black;
 }
 
-tr{
+a:hover{
+	text-decoration: none;
+	color: #DE6E4B;
+}
+
+table.excerp{
+	background-color: #7FD1B9;
+	border-collapse: collapse;
+	border: 2px solid #7A6563;
+	margin: 10px;
+}
+
+.excerp th{
+	font-family: 'Roboto Mono', monospace;
+	color: #7A6563;
+	background-color: #7FD1B9;
+}
+
+.excerp tr{
 	width: 80%;
 	border-width: 2px;
 	border-style: solid;
 	border-color: #7A6563;
+}
+
+.excerp td{
+	padding: 20px;
 }
 
 td.tekst{
 	width: 80%;
 }
+
+td.category{
+	font-size: 0.7em;
+	font-style: italic;
+	text-align: center;
+	padding: 10px;
+}
+
+table.data{
+	padding: 5px;
+	margin: 10px 0 10px 50px;
+	border-collapse: collapse;
+	font-size: 0.8em;
+}
+
+form.newblog label{
+	border: 1px solid black;
+}
+form.newblog input{
+	width: 80%;
+}
+
+form.newblog textarea.excerp{
+	width: 80%;
+	height: 100px;
+}
+
+form.newblog textarea{
+	width: 80%;
+	height: 400px;
+}
+
