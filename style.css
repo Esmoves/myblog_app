@@ -1,0 +1,49 @@
+/* colors: background; #E5D4CE; pink: #E56399; orangje: DE6E4B; lightblue: 7FD1B9; purple grey: 7A6563;
+*/
+
+body{
+	font-family: 'Pontano Sans', sans-serif;
+	background-color: #E5D4CE;
+}
+
+h1{
+	font-family: 'Indie Flower', cursive;
+	color: #E56399;
+	font-size: 3em;
+	text-align: center;
+}
+
+h2{
+	font-family: 'Roboto Mono', monospace;
+	color: #7A6563;
+}
+
+h3{
+
+}
+
+p{
+
+}
+
+table.excerp{
+	border-collapse: collapse;
+	border-width: 2px;
+	border-style: solid;
+	border-color: #7A6563;
+}
+th{
+	font-family: 'Roboto Mono', monospace;
+	color: #7A6563;
+}
+
+tr{
+	width: 80%;
+	border-width: 2px;
+	border-style: solid;
+	border-color: #7A6563;
+}
+
+td.tekst{
+	width: 80%;
+}
