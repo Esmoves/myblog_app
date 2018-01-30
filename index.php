@@ -16,9 +16,21 @@
 
 
    <div id="container" class="container">
-      <div class='titel' id="top-header">
+      <div class="titel" id="top-header">
         <h1>BLOG App</h1>
       </div>
+
+    <!-- Main Menu -->
+    <div class="mainmenu">
+      <ul class="mainmenu">
+        <li><a href="index.php">home</a></li>
+        <li><a href="login.php">register</a></li>
+        <li><a href="login.php">login</a></li>
+        <li><a href="newblog.php">upload blog</a></li>
+      </ul>
+    </div>
+    <br />
+    <br />
 
 
 <!-- connect to database MOVE TO INCLUDE PHP-->
@@ -131,6 +143,6 @@ catch(PDOException $e)
 
 
 
-</div>
-</body>
+    </div>
+  </body>
 </html>
