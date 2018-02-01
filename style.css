@@ -1,32 +1,51 @@
 /* colors: background; #E5D4CE; pink: #E56399; orangje: DE6E4B; lightblue: 7FD1B9; purple grey: 7A6563;
 */
 
+html{
+    min-height:100%;/* make sure it is at least as tall as the viewport */
+    position:relative;
+}
+
 body{
 	font-family: 'Pontano Sans', sans-serif;
 	background-color: #E5D4CE;
+	height: 100%;  /* force the BODY element to match the height of the HTML element */
 }
 
 .container{
-	max-width: 600px;
+	min-width: 800px;
 	margin: 0 auto;
 }
 
+/* title */
+h1{
+	font-family: 'Indie Flower', cursive;
+	color: #E56399;
+	font-size: 3em;
+	text-align: center;
+	margin:0;
+	padding:0;
+	text-shadow: 2px 2px #7A6563;
+}
+
+/* top menu */
 div.mainmenu{
 	font-variant: small-caps;
 	text-align: center;
-	display: inline-block;
-	align-items: center;
+	margin-left: 110px; 
+	display: block;
 }
 
-ul{
+.mainmenu ul{
 	list-style-type: none;
-	display: inline-block;
+	display: block;
 }
 
 .mainmenu li{
 	float: left;
-	border: 1px solid #E56399;
+	border: 2px solid #7A6563;
 	padding: 10px;
+	margin:0;
 	font-weight: bold;
 	background-color: #DE6E4B;
 	border-radius: 10px;
@@ -40,17 +59,56 @@ ul{
 	color: black;
 }
 
-h1{
-	font-family: 'Indie Flower', cursive;
-	color: #E56399;
-	font-size: 3em;
-	text-align: center;
+
+/* floating left menu */
+.leftmenu{
+	width: 130px;
+	height: 100vh; /*  'vh' = viewport height of the browser window. Responsive to resizing of browser and mobile devices.*/
+	float: left;
+	clear: left;
+	background-color: #7A6563;
+	color: white;
+	margin-top: 10px;
+	border: 2px solid darkgrey;
+	margin-right: 10px;
+}
+
+.leftmenu h3{
+	color: black;
+	text-decoration: underline;
+	margin: 20px 0 0 20px;
+	padding: 0;
+}
+
+.leftmenu ul{
+	list-style-type: none;
+}
+
+.leftmenu li{
+	font-variant: small-caps;
+	margin: 0 0 0 -10px;
+}
+
+.leftmenu a{
+	color: white;
+	text-decoration: none;
+}
+
+.leftmenu a:hover{
+	text-decoration: underline;
+}
+
+
+/* show blogs and userpages */
+.maincontent{
+	width: 500px;
+	float: left;
 }
 
 h2{
 	font-family: 'Roboto Mono', monospace;
 	color: #7A6563;
-	padding: 10px 0 20px 20px;
+	padding: 10px 0 10px 20px;
 	font-size: 1.2em;
 	display: inline-block;
 }
@@ -64,6 +122,10 @@ h3{
 
 p{
 
+}
+img {
+    display: block;
+    margin: 0 auto;
 }
 
 a{
@@ -80,13 +142,15 @@ table.excerp{
 	background-color: #7FD1B9;
 	border-collapse: collapse;
 	border: 2px solid #7A6563;
-	margin: 10px;
+	border-radius: 10px;
+	margin-top: 10px;
 }
 
 .excerp th{
 	font-family: 'Roboto Mono', monospace;
 	color: #7A6563;
 	background-color: #7FD1B9;
+	padding-top: 10px;
 }
 
 .excerp tr{
@@ -105,7 +169,7 @@ td.tekst{
 }
 
 td.category{
-	font-size: 0.7em;
+	font-size: 0.9em;
 	font-style: italic;
 	text-align: center;
 	padding: 10px;
@@ -135,3 +199,14 @@ form.newblog textarea{
 	height: 400px;
 }
 
+
+input[type=submit]{
+	width: 200px;
+	background-color: #7FD1B9;
+	padding: 10px;
+	font-variant: small-caps;
+}
+
+.footer{
+	clear: both;
+}
