@@ -11,12 +11,12 @@ try {
             // include html header
             // contains title, mainmenu, leftmenu
             include 'include_html.php';
-            $blogger_id = $_GET['blogger'];
+            $categorie_id = $_GET['cat'];
 
-            // This is the blogger that is being displayed 
-            welcomeblogger($blogger_id);
+            // This is the category that is being displayed 
+            welcomecategory($categorie_id);
             // show all blogs with this category  
-            showblogsbyblogger($blogger_id);
+            showblogsbycategorie($categorie_id);
             ?>
 
 

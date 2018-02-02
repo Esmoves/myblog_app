@@ -16,19 +16,29 @@
 
 
        <div id="container" class="container">
-          <div class="titel" id="top-header">
-            <h1>BLOG App</h1>
-          </div>
+          <div class="titel" id="top-header">        
 
         <!-- Main Menu -->
         <div class="mainmenu">
           <ul class="mainmenu">
             <li><a href="index.php">home</a></li>
-            <li><a href="login.php">register</a></li>
-            <li><a href="login.php">login</a></li>
-            <li><a href="newblog.php">upload blog</a></li>
+            <?php
+            if(isset($_SESSION["login_user"]))  
+            {  
+              ?>
+                <li><a href="user_interface.php">account</a></li>
+                <li><a href="newblog.php">upload blog</a></li>
+                <li><a href="logout.php">logout</a></li>
+              <?php
+            }
+            else{
+              ?><li><a href="login.php">login</a></li><?php
+            }
+            ?>
           </ul>
-        </div>
+          <h1>BLOG App</h1>
+        </div>  
+      </div>
         <br />
         <br />
 

@@ -1,18 +1,23 @@
 <?php
-    include 'include_phpfunctions.php';
+session_start();  
+ if(isset($_SESSION["login_user"])){
 
-//*************************************************************************//
-//*************************************************************************//
-// ***************  Run the page!!!!!  ************************************//
-//*************************************************************************//
-//*************************************************************************//
-try {
-    
-   include 'include_html.php';
+  include_once ('include_phpfunctions.php');
+  include_once ('include_html.php');
 
-   if ( empty( $_POST ) ){ // if form is not send show form
+   if ( empty( $_POST['newblog'] ) ){ // if form is not send show form
+        
+        // get user_id
+        $username = $_SESSION['login_user'];
+        $sql_user = "SELECT * FROM bloggers WHERE username = '$username'";
+        foreach($db->query($sql_user) as $row){
+          $user_id = $row['id'];
+          getBlogger($user_id);
+        }    
+
+        
+
     ?>
-
         <form id="newblog" class="newblog" name="newblog" enctype="multipart/form-data" action="./newblog.php" method="post">
         <label for"titel">Titel</label><br />
         <input type="text" name="titel" id="titel" required="required" placeholder="Please Enter your titel" /><br /><br />
@@ -43,7 +48,7 @@ try {
             ?>
           </select><br /><br />
 
-        <input type="submit" id="newblog" class="btn" style="width:200px;" value="upload my blog!" />  
+        <input type="submit" id="newblog" name="newblog" style="width:200px;" value="upload my blog!" />  
       </div>   
 
     </div> <!-- end container -->
@@ -51,14 +56,32 @@ try {
 </html> 
 
     <?php
-    } else{ // if form is submitted, upload input to db
+    } 
+    else if ( !empty( $_POST['newblog'] ) ){ // if form is submitted, upload input to db
+   /*      echo "doet ie het";
+          $titel= $_POST['titel'];
+          $tekst= $_POST['tekst'];
+          $imgFile = $_FILES['image']['name'];
+          $tmp_dir = $_FILES['image']['tmp_name'];
+          $imgSize = $_FILES['image']['size']; 
+          $excerp= $_POST['excerp'];
+          echo $titel;
+          echo $tekst;
+          echo $imgFile;
+          echo $tmp_dir;
+          echo $imgSize;
+          echo $excerp;
+          $array = $_POST['category']; // unpack the array from post category
+          print_r($array); 
+         exit();
+         Resultaat: Geeft alle velden correct weer
+         */ 
           upload();
-          header("location:index.php");
     }
-  }
 
-catch(PDOException $e)
-    {
-    echo "Connection failed: " . $e->getMessage();
-    }
+} // end session
+else{
+  header("location:login.php");
+}
+    
 ?>

@@ -1,30 +1,26 @@
 <?php
+session_start();  
+
     include_once ('include_phpfunctions.php');
     
-//*************************************************************************//
-//*************************************************************************//
-// ***************  Run the page!!!!!  ************************************//
-//*************************************************************************//
-//*************************************************************************//
-     // include html header
-     // contains title, mainmenu, leftmenu
-      
-      include_once ('include_html.php');
-      include_once ('user.php');
-      
+    include_once ('user.php');
+
      if ( isset( $_POST['submit'] ) ){ // if form is not send show form
      	$username = $_POST['username'];
      	$password = $_POST['password'];
 
      	$object = new User();
      	$object->Login($username, $password);
+     	// varification error already done in user.php
+ 		$_SESSION['login_user']=$username; // Initializing Session
+ 		header("location:user_interface.php");
+	}
+	else{ // if form not submitted show form
 
-     	//header("location:welcome.php");
-    	}
-
+		// include html header  
+      	include_once ('include_html.php');
      ?>
-
-     	<form name="login" id="login" method="POST" action="login.php">
+ 		<form name="login" id="login" method="POST" action="login.php">
      		<label for"username">Username</label><br />
      		<input type="text" name="username"><br /><br />
      		<label for="password">Password</label><br />
@@ -49,3 +45,6 @@
     </div> <!-- end container div -->
   </body>
 </html>
+<?php
+}
+?>

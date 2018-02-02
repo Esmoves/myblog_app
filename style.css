@@ -10,10 +10,12 @@ body{
 	font-family: 'Pontano Sans', sans-serif;
 	background-color: #E5D4CE;
 	height: 100%;  /* force the BODY element to match the height of the HTML element */
+	background-color: #E56399;
+	background-image: linear-gradient(#E5D4CE, #E56399, #7A6563);
 }
 
 .container{
-	min-width: 800px;
+	width: 650px;
 	margin: 0 auto;
 }
 
@@ -23,17 +25,21 @@ h1{
 	color: #E56399;
 	font-size: 3em;
 	text-align: center;
-	margin:0;
+	margin: 0px;
 	padding:0;
 	text-shadow: 2px 2px #7A6563;
+}
+
+div.titel{
+	border-bottom: 2px dotted #E56399;
+	max-width: 650px;
 }
 
 /* top menu */
 div.mainmenu{
 	font-variant: small-caps;
 	text-align: center;
-	margin-left: 110px; 
-	display: block;
+	margin-left: -20px;
 }
 
 .mainmenu ul{
@@ -138,12 +144,31 @@ a:hover{
 	color: #DE6E4B;
 }
 
+button{
+	border: 2px solid #7A6563;
+	padding: 10px;
+	margin:0;
+	font-weight: bold;
+	background-color: #DE6E4B;
+	border-radius: 10px;
+}
+
+button a{
+	color: white;
+	text-decoration: none;
+}
+button a:hover{
+	color: black;
+	text-decoration: underline;
+}
+
 table.excerp{
 	background-color: #7FD1B9;
 	border-collapse: collapse;
 	border: 2px solid #7A6563;
 	border-radius: 10px;
 	margin-top: 10px;
+	width: 500px;
 }
 
 .excerp th{

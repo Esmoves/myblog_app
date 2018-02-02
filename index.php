@@ -1,5 +1,5 @@
-
 <?php
+session_start();  
     include 'include_phpfunctions.php';
 
 
@@ -16,8 +16,6 @@ try {
       // get all blogs by user_id
       getUserId();
 
-      // get one blog by user_id and blog_id
-     // getUserId_foroneblog();
       ?>
 
 
@@ -44,7 +42,7 @@ try {
 // ERROR IF NO CONNECTION DATABASE
 catch(PDOException $e)
     {
-    echo "Connection failed: " . $e->getMessage();
+    echo "Connection failed";
     }
 
 ?>

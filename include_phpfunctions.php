@@ -4,13 +4,19 @@
 // global scope
 $dbServername = "localhost";
 $dbUsername = "root";
-$dbPassword = "";
+//$dbUsername = "tomklru270_esmo";
+$dbPassword="";
+//$dbPassword = "flapperdeflap";
 $dbname = "myblog"; 
+//$dbname = "tomklru270_blogesmo";
 // Connect to database global
 $db = new PDO("mysql:host=$dbServername;dbname=$dbname;charset=utf8mb4", $dbUsername, $dbPassword);
   // set the PDO error mode to exception
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   // $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+
+
 
 
 //*************************************************************************//
@@ -27,11 +33,12 @@ global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
       $username = $row['username'];
          getAllBlogsFromDB($user_id, $username);
       }
+      unset($row);
 }
 
 //*************************************************************************//
 //*************************** INDEX.php ***********************************//
-// ***************  get all pages from one user_id ************************//
+// ***************  get all blogs by user_id sorted on newest first *******//
 //*************************************************************************//
 
 function getAllBlogsFromDB($user_id, $username){
@@ -48,7 +55,8 @@ function getAllBlogsFromDB($user_id, $username){
         echo "<tr><td>";
         echo "<img src='./user_images/" .$row['id_hoofdimg']. "' height='200px' />";
         echo "</td></tr>";
-        echo "<tr><td class='tekst'>".$row['excerp']. "</td></tr>";
+
+        echo "<tr><td class='tekst'>" . $link . $row['excerp']. "</a></td></tr>";
         echo "<tr><td class='category'><em>Category: ";
         
         getCategory($row['id']);
@@ -56,6 +64,7 @@ function getAllBlogsFromDB($user_id, $username){
         echo "</em></td></tr>";
         echo "</table>";
     }
+    unset($row);
 }
 
 //*************************************************************************//
@@ -71,6 +80,18 @@ global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
       $blog_id = $_GET['blog'];
        //  getOneBlogFromDB($user_id, $username, $blog_id);
       }
+      unset($row);
+}
+
+function getBloggerbyBlogid($user_id){
+  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+
+  $sql = "SELECT * FROM bloggers WHERE id='$user_id'";
+  foreach($db->query($sql) as $row) {
+    $username= $row['username'];
+    echo "<em> By " .$username. "</em></th></tr>";
+  }
+  unset($row);
 }
 
 function getCategory($blog_id){
@@ -84,10 +105,12 @@ function getCategory($blog_id){
         echo $category;
         echo " | ";
       }
+      unset($row2);
     }
+    unset($row);
 }
 
-// ACTUAL CONTENT page blogger.php
+// Get the actual blog
 function getOneBlogFromDB($blog_id){
  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
 
@@ -108,18 +131,8 @@ function getOneBlogFromDB($blog_id){
         echo "<tr><td class='tekst'>" .$row['tekst']. "</td></tr>";  
         echo "</table>";
     }
+    unset($row);
 }
-
-function getBloggerbyBlogid($user_id){
-  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-
-  $sql = "SELECT * FROM bloggers WHERE id='$user_id'";
-  foreach($db->query($sql) as $row) {
-    $username= $row['username'];
-    echo "<em> By " .$username. "</em></th></tr>";
-  }
-}
-
 
 
 //*************************************************************************//
@@ -137,6 +150,7 @@ function showbloggers(){
         echo $row['username'];
         echo "</a></li>";
     }
+    unset($row);
 }
 
 
@@ -149,6 +163,7 @@ function showcategories(){
         echo $row['naam'];
         echo "</a></li>";
     }
+    unset($row);
 }
 
 
@@ -162,7 +177,15 @@ function showcategories(){
 function getBlogger($user_id){
     global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
     $sql = "SELECT * FROM bloggers WHERE id= '$user_id'";
-    foreach($db->query($sql) as $row) {
+
+    //// return first row
+    $sth = $db->prepare($sql);
+    $sth->execute();
+    $row = $sth->fetch(PDO::FETCH_ASSOC);
+
+    ////
+
+    // foreach($db->query($sql) as $row) {
       $user_id = $row['id'];
       $username = $row['username'];
       $firstname = $row['firstname'];
@@ -170,9 +193,9 @@ function getBlogger($user_id){
       $name = $firstname. " " .$lastname;
       $user_email = $row['email'];   
 
-      echo "<h2>Upload a new blog as " .$name. " </h2>";
+      echo "<h2>Upload as " .$name. " </h2>";
     }
-  }
+
 
 //*************************************************************************//
 // *************  INSERT NEW BLOG INTO DATABASE upon POST  ****************//
@@ -181,20 +204,24 @@ function getBlogger($user_id){
   function upload(){
 
     global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-    global $user_id;
-
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // <== added for upload purposes
     $titel= $_POST['titel'];
     $tekst= $_POST['tekst'];
-    $id_hoofdimg = 10;
     $imgFile = $_FILES['image']['name'];
     $tmp_dir = $_FILES['image']['tmp_name'];
     $imgSize = $_FILES['image']['size']; 
     $excerp= $_POST['excerp'];
- //   $user_id = $_POST['user_id'];
-    $user_id = 1;
-    $dbh = new PDO("mysql:host=$dbServername;dbname=$dbname;charset=utf8mb4", $dbUsername, $dbPassword);
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // <== added for upload purposes
-  
+
+    // get user_id
+  /*  $username = $_SESSION['login_user'];
+    $sql_user = "SELECT * FROM bloggers WHERE username = '$username'";
+    foreach($db->query($sql_user) as $user){
+      $user_id = $user['id'];
+      return $user_id;
+    } 
+    */
+    $user_id='2';   
+
     // handle the header img
     $upload_dir = 'user_images/'; // upload directory
     $imgExt = strtolower(pathinfo($imgFile,PATHINFO_EXTENSION)); // get image extension
@@ -216,39 +243,32 @@ function getBlogger($user_id){
       $errMSG = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";  
      }
     
-
+ 
     if(!isset($errMSG)){
       $sql = "INSERT INTO blogs ( user_id, titel, tekst, id_hoofdimg, excerp ) VALUES ( :user_id, :titel, :tekst, :id_hoofdimg, :excerp )";
-      $query = $dbh->prepare( $sql );
+      $query = $db->prepare( $sql );
+      $query->execute( array(':user_id'=>$user_id, ':titel'=>$titel, ':tekst'=>$tekst, ':id_hoofdimg'=>$userpic, ':excerp'=>$excerp ) );
+     
+   /*  $blog_id = $db->lastInsertId();  // find blog_id from the last upload
 
-      if ( $query->execute( array(':user_id'=>$user_id, ':titel'=>$titel, ':tekst'=>$tekst, ':id_hoofdimg'=>$userpic, ':excerp'=>$excerp ) ) )
-      {
-        $blog_id = $query->insert_id;  // find blog_id from the last upload
-        // add the categories
-        //uploadCat( $blog_id ); 
+      $array = $_POST['category']; // unpack the array from post category
+          // print_r($category);  geeft Array ( [0] => 1 [1] => 2 [2] => 4 )
+          for ($i = 0; $i < count($array); $i++) {
+            $categorie_id = $array[$i];
+            $sql2 = "INSERT INTO connectcatwithblog ('categorie_id', 'blog_id') 
+                VALUES ('$categorie_id', '$blog_id')";
+            $query2 = $db->prepare($sql2); 
+            $query2->execute();
+
+          }
+*/
         echo "<script type= 'text/javascript'>alert('New Blog Inserted Successfully');</script>";
+        header('location: user_interface.php');
       }
       else{
         echo "<script type= 'text/javascript'>alert('Blog not successfully Inserted.');</script>";
        }
-    }
-  }
-
-//*************************************************************************//
-//********************* Upload categories seperatly ***********************//
-//*************************************************************************//
-function uploadCat( $blog_id ){
-  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-  foreach ($_POST['category'] as $categorie_id)
-    {  
-      $sql2 = $db->prepare("INSERT INTO connectcatwithblog (`categorie_id`, `blog_id`) VALUES ( :categorie_id, :blog_id)");     
-      $sql2->bindParam(':categorie_id', $categorie_id);
-      $sql2->bindParam(':blog_id', $blog_id);
-      $sql2->execute();
-      print_r($sql2);
-      echo "succes";
-    }
-    
+     
   }
 
 
@@ -266,15 +286,17 @@ function welcomecategory($categorie_id){
         $categorie = $row['naam'];
         echo "<h2>All blogs with category: " .$categorie. "</h2>";
     }
+    unset($row);
   }
 
 function showblogsbycategorie($categorie_id){
  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-  $sql = "SELECT * FROM connectcatwithblog WHERE categorie_id = $categorie_id";
+  $sql = "SELECT * FROM connectcatwithblog WHERE categorie_id = $categorie_id ORDER BY blog_id DESC";
   foreach($db->query($sql) as $row) {
         $blog_id = $row['blog_id'];
           getOneBlogFromDB($blog_id);
     }
+    unset($row);
 }
 
 
@@ -293,21 +315,99 @@ function welcomeblogger($blogger_id){
         $blogger_id= $row['id'];
         echo "<h2>All blogs by: " .$blogger. "</h2>";
     }
+    unset($row);
   }
 
 function showblogsbyblogger($blogger_id){
  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-  $sql = "SELECT * FROM blogs WHERE user_id = $blogger_id";
+  $sql = "SELECT * FROM blogs WHERE user_id = $blogger_id ORDER BY id DESC";
   foreach($db->query($sql) as $row) {
+        $blog_id= $row['id'];
+        $link = "<a href='./blog.php?blog=" .$blog_id. "''>";
         echo "<table class='excerp'>";
-        echo "<tr><th colspan='1'>" .$row['titel']. "<br />";
-        echo "<tr><td class='category'>categories: ";
-        getCategory($row['id']);
+        echo "<tr><th colspan='1'>" . $link . $row['titel']. "</a><br />";
+        echo "</th></tr>";
+        // show image 
+        echo "<tr><td>";
+        echo "<img src='./user_images/" .$row['id_hoofdimg']. "' height='200px' />";
         echo "</td></tr>";
-        echo "<tr><td class='tekst'>" .$row['tekst']. "</td></tr>";  
+
+        echo "<tr><td class='tekst'>" . $link . $row['excerp']. "</a></td></tr>";
+        echo "<tr><td class='category'><em>Category: ";
+        
+        getCategory($row['id']);
+
+        echo "</em></td></tr>";
         echo "</table>";
     }
+    unset($row);
 }
 
+//*************************************************************************//
+//************************ USER PAGE **************************************//
+//*************************************************************************//
+
+// show all blogs with uptions to edit or delete //
+function userinterface($user){
+  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+  echo "<table class='excerp'>";
+  echo "<th colspan='3'>Manage your blogs</th>";
+
+  $sql = "
+  SELECT * 
+  FROM bloggers a, blogs b 
+  WHERE a.id = b.user_id AND a.username = '$user'";
+  $db->query($sql);
+  foreach($db->query($sql) as $row) {
+    $blog_id= $row['id'];
+    $link = "<a href='./blog.php?blog=" .$blog_id. "''>";
+    echo "<tr><td>" . $link . $row['titel']. "</a></td>";
+    echo "<td><a href='./editblog.php?action=edit&user=" .$row['user_id']. "&blog=" .$blog_id. "''>edit</a></td>";
+    echo "<td><a href='./editblog.php?action=delete&user=" .$row['user_id']. "&blog=" .$blog_id. "''>delete</a></td>";
+    echo "</tr>";
+    }
+    echo "</table>";
+
+    $firstname = $row['firstname'];
+    $lastname = $row['lastname'];
+    $email = $row['email'];
+    echo "<table class='excerp'><tr><th colspan='2'>Settings user</th></tr>";
+    echo "<tr><td>Name</td><td>" .$firstname. " " .$lastname. "</td></tr>";
+    echo "<tr><td>Email</td><td>" .$email. "</td></tr>";
+    echo "</table>";
+
+    unset($row);
+  }
+
+
+// Edit a blog //
+function editmyblog($blog_id){
+    global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+
+    $titel= $_POST['titel'];
+    $tekst= $_POST['tekst'];
+    $imgFile = $_FILES['image']['name'];
+    $tmp_dir = $_FILES['image']['tmp_name'];
+    $imgSize = $_FILES['image']['size']; 
+    $excerp= $_POST['excerp'];
+    
+    $dbh = new PDO("mysql:host=$dbServername;dbname=$dbname;charset=utf8mb4", $dbUsername, $dbPassword);
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // <== added for upload purposes
+  
+    $sql = "UPDATE blogs 
+    SET titel='$titel', tekst='$tekst', excerp= '$excerp'
+    WHERE id = '$blog_id'";
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+    echo $stmt->rowCount() . " records UPDATED successfully";
+    }
+
+// Delete a blog //
+function deleteblog($blog_id){
+  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+  $sql = "DELETE FROM blogs WHERE id = '$blog_id'";
+  $stmt = $db->prepare($sql);
+  $stmt->execute();
+}
 
   ?>
