@@ -362,8 +362,8 @@ function userinterface($user){
     $blog_id= $row['id'];
     $link = "<a href='./blog.php?blog=" .$blog_id. "''>";
     echo "<tr><td>" . $link . $row['titel']. "</a></td>";
-    echo "<td><a href='./editblog.php?action=edit&user=" .$row['user_id']. "&blog=" .$blog_id. "''>edit</a></td>";
-    echo "<td><a href='./editblog.php?action=delete&user=" .$row['user_id']. "&blog=" .$blog_id. "''>delete</a></td>";
+    echo "<td><a href='./editblog.php?action=edit&user=" .$row['user_id']. "&blog=" .$blog_id. "'>edit</a></td>";
+    echo "<td><a href='./editblog.php?action=delete&user=" .$row['user_id']. "&blog=" .$blog_id. "'>delete</a></td>";
     echo "</tr>";
     }
     echo "</table>";
