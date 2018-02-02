@@ -13,12 +13,12 @@ if ( empty( $_POST['newblog'] ) ){ // if form is not send show form
     $user = $_GET['user'];
     $blog_id = $_GET['blog'];
 
-    if($action = 'delete'){
+    if($action == 'delete'){
       deleteblog($blog_id);
       header('location:user_interface.php');
     }
 
-    if ($action = 'edit'){
+    if ($action == 'edit'){
       //get the values
       $sql = "SELECT * FROM blogs WHERE id='$blog_id'";
       foreach($db->query($sql) as $row) {
