@@ -27,7 +27,7 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 function getUserId(){
 global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-    $sql = "SELECT * FROM bloggers";
+    $sql = "SELECT * FROM bloggers ORDER BY id DESC";
     foreach($db->query($sql) as $row){
       $user_id = $row['id'];
       $username = $row['username'];
@@ -46,8 +46,9 @@ function getAllBlogsFromDB($user_id, $username){
 
   $sql = "SELECT * FROM blogs WHERE user_id='$user_id' ORDER BY id DESC";
   foreach($db->query($sql) as $row) {
+     if (!empty($row)){
         $blog_id= $row['id'];
-        $link = "<a href='./blog.php?blog=" .$blog_id. "''>";
+        $link = "<a href='./blog.php?blog=" .$blog_id. "'>";
         echo "<table class='excerp'>";
         echo "<tr><th colspan='1'>" . $link . $row['titel']. "</a><br />";
         echo "<em> By " .$username. "</em></th></tr>";
@@ -63,6 +64,10 @@ function getAllBlogsFromDB($user_id, $username){
 
         echo "</em></td></tr>";
         echo "</table>";
+      }
+      else { 
+        echo "<p>Nothing to show.</p>";
+      }
     }
     unset($row);
 }
@@ -352,32 +357,31 @@ function userinterface($user){
   global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
   echo "<table class='excerp'>";
   echo "<th colspan='3'>Manage your blogs</th>";
-
   $sql = "
   SELECT * 
   FROM bloggers a, blogs b 
   WHERE a.id = b.user_id AND a.username = '$user'";
   $db->query($sql);
   foreach($db->query($sql) as $row) {
-    $blog_id= $row['id'];
-    $link = "<a href='./blog.php?blog=" .$blog_id. "''>";
-    echo "<tr><td>" . $link . $row['titel']. "</a></td>";
-    echo "<td><a href='./editblog.php?action=edit&user=" .$row['user_id']. "&blog=" .$blog_id. "'>edit</a></td>";
-    echo "<td><a href='./editblog.php?action=delete&user=" .$row['user_id']. "&blog=" .$blog_id. "'>delete</a></td>";
-    echo "</tr>";
-    }
-    echo "</table>";
+        $blog_id= $row['id'];
+        $link = "<a href='./blog.php?blog=" .$blog_id. "''>";
+        echo "<tr><td>" . $link . $row['titel']. "</a></td>";
+        echo "<td><a href='./editblog.php?action=edit&user=" .$row['user_id']. "&blog=" .$blog_id. "'>edit</a></td>";
+        echo "<td><a href='./editblog.php?action=delete&user=" .$row['user_id']. "&blog=" .$blog_id. "'>delete</a></td>";
+        echo "</tr>";
+        }
+        echo "</table>";
 
-    $firstname = $row['firstname'];
-    $lastname = $row['lastname'];
-    $email = $row['email'];
-    echo "<table class='excerp'><tr><th colspan='2'>Settings user</th></tr>";
-    echo "<tr><td>Name</td><td>" .$firstname. " " .$lastname. "</td></tr>";
-    echo "<tr><td>Email</td><td>" .$email. "</td></tr>";
-    echo "</table>";
-
-    unset($row);
-  }
+        $firstname = $row['firstname'];
+        $lastname = $row['lastname'];
+        $email = $row['email'];
+        echo "<table class='excerp'><tr><th colspan='2'>Settings user</th></tr>";
+        echo "<tr><td>Name</td><td>" .$firstname. " " .$lastname. "</td></tr>";
+        echo "<tr><td>Email</td><td>" .$email. "</td></tr>";
+        echo "</table>";
+        unset($row);
+      }
+    
 
 
 // Edit a blog //
@@ -409,5 +413,42 @@ function deleteblog($blog_id){
   $stmt = $db->prepare($sql);
   $stmt->execute();
 }
+
+
+ function managecategories(){
+   global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+   $sql = "SELECT * FROM categorie";
+   echo "<table class='excerp'><tr><th colspan='2'>Categories</th></tr>";
+   foreach($db->query($sql) as $row) {
+      $categorie = $row['naam'];
+      $categorie_id = $row['id'];
+      $link = "<a href='./user_interface.php?cat=" .$categorie_id. "'>";
+      
+      echo "<tr><td>" .$categorie. "</td>";
+      echo "<td>" .$link. "delete</a></td>";
+      echo "</tr>";
+      
+    }
+    echo "</table>";  
+    unset($row);
+  }
+
+function deletecat($cat_id){
+  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+  $sql = "DELETE FROM categorie WHERE id = '$cat_id'";
+  $stmt = $db->prepare($sql);
+  if ($stmt->execute()){
+      header('location:user_interface.php');
+    }
+ }
+
+ function insertnewcat($newcatname){
+  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+  $sql = "INSERT INTO categorie (naam) VALUES ( :naam )";
+  $query = $db->prepare( $sql );
+  if( $query->execute( array(':naam'=>$newcatname ) ) ){
+     header('location:user_interface.php');
+  }
+ }
 
   ?>
