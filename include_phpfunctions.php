@@ -139,6 +139,55 @@ function getOneBlogFromDB($blog_id){
     unset($row);
 }
 
+// get the comments of the blog
+// use JOIN to join the blog_comment table with the blogs table and the comment table
+  function getcomments($blog_id){
+    global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+    echo "<table class='comments'>";
+    echo "<tr><th colspan='1'>Comments</th></tr>";
+    
+    $sql="SELECT c.comment
+    FROM comments c
+    INNER JOIN blogs b ON b.id = c.blog_id";    
+    foreach($db->query($sql) as $row) {
+        echo "<tr><td>" .$row['comment']. "</td></tr>";
+        // echo "<tr><td>delete</td></tr>"; 
+      }
+      //echo "</table>";
+      unset($row);
+  }
+
+// INSERT a new comment to the DB
+
+function insertcomment(){
+   global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+   $comment = htmlspecialchars($_POST['comment']);
+   $blog_id = $_POST['blog_id'];
+
+   $sql = "INSERT INTO comments ( blog_id, comment ) VALUES ( :blog_id, :comment)";
+   $query = $db->prepare( $sql );
+   $query->execute( array( ':blog_id'=>$blog_id, ':comment'=>$comment )); 
+
+   header('location:blog.php?blog='.$blog_id.'');
+
+    /*
+  // use a new techniek 
+  // try CTE Query
+  $sql="WITH cte_name AS (
+    INSERT INTO comments
+    ( text )
+    VALUES
+    ( '$text' )
+    RETURNING id ),
+    cte_name2 AS
+    INSERT INTO blog_comment
+    ( blog_id, comment_id )
+    VALUES
+    ( '$blog_id', id )";
+
+*/   
+}
+
 
 //*************************************************************************//
 //*********************   Leftmenu ****************************************//
