@@ -13,6 +13,7 @@ session_start();
         foreach($db->query($sql_user) as $row){
           $user_id = $row['id'];
           getBlogger($user_id);
+    //     echo "<h2>Upload as " .$name. " </h2>";
         }    
 
         
@@ -31,11 +32,12 @@ session_start();
         <textarea id="tekst" name="tekst" required="required"></textarea><br /><br />
        <div style="margin-left: 100px;">
           <label for="category">Choose your categories</label>
-          <p style="font-size: 0.7em"><em>Keep CTRL pressed to select multiple categories</em></p>
+       <!--   <p style="font-size: 0.7em"><em>Keep CTRL pressed to select multiple categories</em></p> 
+       -->
 
           <!-- Get the categories out of the database to display in a multiple choice.
                You should be able to choose multiple categories-->
-          <select  width="200" style="width: 200px" id="category" name="category[]" multiple> <!-- Initializing Name With An Array -->
+          <select  width="200" style="width: 200px" id="category" name="category"> <!-- <select  width="200" style="width: 200px" id="category" name="category[]" multiple> Initializing Name With An Array -->
             <?php
                 global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
                 $sql = "SELECT * FROM categorie";
@@ -48,34 +50,20 @@ session_start();
             ?>
           </select><br /><br />
 
-        <input type="submit" id="newblog" name="newblog" style="width:200px;" value="upload my blog!" />  
+        <input type="submit" id="submitnewblog" name="newblog" style="width:200px;" value="upload my blog!" />  
       </div>   
 
     </div> <!-- end container -->
   </body>
+ <script src="scripts.js"></script>
 </html> 
 
     <?php
     } 
     else if ( !empty( $_POST['newblog'] ) ){ // if form is submitted, upload input to db
-   /*      echo "doet ie het";
-          $titel= $_POST['titel'];
-          $tekst= $_POST['tekst'];
-          $imgFile = $_FILES['image']['name'];
-          $tmp_dir = $_FILES['image']['tmp_name'];
-          $imgSize = $_FILES['image']['size']; 
-          $excerp= $_POST['excerp'];
-          echo $titel;
-          echo $tekst;
-          echo $imgFile;
-          echo $tmp_dir;
-          echo $imgSize;
-          echo $excerp;
-          $array = $_POST['category']; // unpack the array from post category
-          print_r($array); 
-         exit();
-         Resultaat: Geeft alle velden correct weer
-         */ 
+         
+         
+         
           upload();
     }
 
