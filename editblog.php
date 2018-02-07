@@ -36,7 +36,7 @@ if ( empty( $_POST['newblog'] ) ){ // if form is not send show form
         <textarea id="excerp" class="excerp" name="excerp" required="required" value="<?php echo $row["excerp"] ?>"><?php echo $row["excerp"] ?></textarea><br /><br />
         <label for"tekst">Text</label><br />
         <textarea id="tekst" name="tekst" required="required" value="<?php echo $row["excerp"] ?>"><?php echo $row["excerp"] ?></textarea><br /><br />
-        <input type="submit" id="newblog" name="newblog" style="width:200px;" value="edit my blog!" />  
+        <input type="submit" id="submit" name="newblog" style="width:200px;" value="edit my blog!" />  
       </div>   
 
     </div> <!-- end container -->
