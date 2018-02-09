@@ -5,7 +5,7 @@ session_start();
   include_once('include_phpfunctions.php');
   include_once('include_html.php');
 
-// if not empyt post do not empty get
+// if not empty post do not empty get
 if ( empty( $_POST['newblog'] ) ){ // if form is not send show form
 
   if(!empty($_GET['action'])&&!empty($_GET['user'])&&!empty($_GET['blog'])){
