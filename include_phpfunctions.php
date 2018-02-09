@@ -1,12 +1,22 @@
 <!-- connect to database MOVE TO INCLUDE PHP-->
 <?php
 
+// global scope
+$dbServername = "localhost";
+$dbUsername = "";
+$dbPassword = "";
+$dbname = "";
+// Connect to database global
+$db = new PDO("mysql:host=$dbServername;dbname=$dbname;charset=utf8mb4", $dbUsername, $dbPassword);
+  // set the PDO error mode to exception
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // ******************************************************************//
 //*************************** General functions *********************//
 //*******************************************************************//
 
 function getuserid(){
+    global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
     // get user_id
     $username = $_SESSION['login_user'];
     $sql_user = "SELECT * FROM bloggers WHERE username = '$username'";
@@ -57,15 +67,16 @@ function showblogsbyblogger($blogger_id){
         echo "<table class='excerp'>";
         echo "<tr><th colspan='1'>" . $link . $row['titel']. "</a><br />";
         echo "</th></tr>";
-        // show image 
-        echo "<tr><td>";
-        echo "<img src='./user_images/" .$row['id_hoofdimg']. "' height='200px' />";
-        echo "</td></tr>";
-
+         if(!empty($row['id_hoofdimg'])){
+          // show image 
+          echo "<tr><td>";
+          echo "<img src='./user_images/" .$row['id_hoofdimg']. "' height='200px' />";
+          echo "</td></tr>";
+        }
         echo "<tr><td class='tekst'>" . $link . $row['excerp']. "</a></td></tr>";
         echo "<tr><td class='category'><em>Category: ";
         
-        getCategory($row['id']);
+        getCategory($row['category']);
 
         echo "</em></td></tr>";
         echo "</table>";
@@ -80,18 +91,22 @@ function showblogsbyblogger($blogger_id){
 //*************************************************************************//
 //*************************************************************************//
 
-// left MENU BUTTONS:
+/*
 function showcategories(){
- global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
   $sql = "SELECT * FROM categorie";
+  echo "<form id='cat' name='cat'>";
+  echo "<select name='category' onchange='showBlogCategory(this.categor)'>";
   foreach($db->query($sql) as $row) {
-        echo "<li>";
-        echo "<a href='categories.php?cat=" .$row['id']. "''>";
-        echo $row['naam'];
-        echo "</a></li>";
+      echo "<option name='categor' value='" .$row['id']. "'>";
+      echo $row['naam'];
+      echo "</option>";
     }
+    echo "</select></form>";
     unset($row);
-}
+  }
+
+*/
 
 // *************** Show the blogs of one categorie**************************//
 function welcomecategory($categorie_id){
@@ -254,20 +269,33 @@ function insertcomment(){
   function getcomments($blog_id){
     global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
     echo "<table class='comments'>";
-    echo "<tr><th colspan='1'>Comments</th></tr>";
     
-    $sql="SELECT c.comment
+    $sql="SELECT c.comment, b.closed
     FROM comments c
     INNER JOIN blogs b 
     ON b.id = c.blog_id
     WHERE b.id= '$blog_id'
-    AND c.deleted = 'false'";    
+    AND c.deleted = 'false'"; 
+    
     foreach($db->query($sql) as $row) {
-        echo "<tr><td>" .$row['comment']. "</td></tr>";
-      }
-      echo "</table>";
+
+        echo "<tr><td>Comment</td>";
+        echo "<td>" .$row['comment']. "</td></tr>";
+       }
+       
+        if($row['closed'] == false){
+        // show upload comment
+        echo "<br />";
+        echo '<form action="blog.php" method="post" name="comment" class="inputform">';
+        echo '<label for="comment">Send us your comment</label><br>';
+        echo '<input type="hidden" name="blog_id" value="' .$blog_id. '" />';
+        echo '<textarea class="excerp" type="text" name="comment"></textarea><br />';
+        echo '<input type="submit" name="submit" value="send" />'; 
+       }
+       echo "</table>";
       unset($row);
-  }
+      
+    }
 
 
 // get the comments of the blog with option to to delete them
@@ -298,6 +326,16 @@ function insertcomment(){
     $stmt = $db->prepare($sql);
     if ($stmt->execute()){        
           echo "<script>alert('Comment deleted!')</script>";     
+    }
+ }
+
+ // close a blog for commenting
+  function closeblog($blog_id){
+    global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+    $sql = "UPDATE blogs SET closed=true WHERE id = $blog_id";
+    $stmt = $db->prepare($sql);
+    if ($stmt->execute()){        
+          echo "<script>alert('Blog is closed for commenting!')</script>";     
     }
  }
 
@@ -345,7 +383,13 @@ function getBlogger($user_id){
     $excerp= $_POST['excerp'];
     $category= $_POST['category'];
 
-    getuserid(); 
+    
+    // get user_id
+    $username = $_SESSION['login_user'];
+    $sql_user = "SELECT * FROM bloggers WHERE username = '$username'";
+    foreach($db->query($sql_user) as $user){
+      $user_id = $user['id'];
+    }  
 
     // if illustration is given, upload img   
     if(!empty($_FILES['image']['name'])){
@@ -374,7 +418,7 @@ function getBlogger($user_id){
         echo "<script type= 'text/javascript'>alert('Sorry, only JPG, JPEG, PNG & GIF files are allowed.');</script>"; 
        }
       }
-      else $userpic = "NULL";
+      else $userpic = "";
    
       // start the actual upload section
       $sql = "INSERT INTO blogs ( user_id, titel, tekst, id_hoofdimg, excerp, category ) VALUES ( :user_id, :titel, :tekst, :id_hoofdimg, :excerp, :category)";
@@ -382,7 +426,7 @@ function getBlogger($user_id){
       if( $query->execute( array(':user_id'=>$user_id, ':titel'=>$titel, ':tekst'=>$tekst, ':id_hoofdimg'=>$userpic, ':excerp'=>$excerp, 'category'=>$category ) ) )
         {   
           echo "<script type= 'text/javascript'>alert('New Blog Inserted Successfully');</script>";
-          header('location: user_interface.php');
+          header('location: manageblogs.php');
       }
       else{
         echo "<script type= 'text/javascript'>alert('Blog not successfully Inserted.');</script>";
