@@ -21,7 +21,9 @@ Upon login, more buttons appear:
   <li>UPLOAD BLOG: to upload a new blog with an img and categories</li>
   <li>LOGOUT: to end the session</li>
   </ul>
-Upon login, the page to show an individual blog is also extended. On this page you can
+Upon login, the page to show an individual blog is also extended. <br />
+If you are the author of the blog, you will see new options popping up.<br />
+You can
     <ul>
       <li>delete a comment</li>
       <li>close the blog for commenting</li>
