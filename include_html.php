@@ -10,7 +10,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
         <link href="./style.css"  media="all" rel="stylesheet" type="text/css" />
         <link href="https://fonts.googleapis.com/css?family=Indie+Flower|Pontano+Sans|Roboto+Mono" rel="stylesheet" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='./scripts.js'></script>
+        <script src='./scriptscat.js'></script>
+
        <title>Chatt App</title>
+
     </head>
     <body>
 
@@ -27,8 +32,10 @@
             {  
               ?>
                 <li><a href="user_interface.php">account</a></li>
-                <li><a href="newblog.php">upload blog</a></li>
+                <li><a href="manageblogs.php">manage blogs</a></li>
+                <li><a href="newblog.php">upload new blog</a></li>    
                 <li><a href="logout.php">logout</a></li>
+                <br /><br />
               <?php
             }
             else{
@@ -52,10 +59,27 @@
                 ?>
               </ul>
              <h3>Categories</h3>
-             <ul class="lmenu">
-              <?php
-                showcategories();
-                ?>
-             </ul> 
+             <ul id='myid' class="lmenu">
+        
+               <?php
+               function showcategories(){             
+                $db = new PDO("mysql:host=localhost;dbname=myblog;charset=utf8mb4", "root", "");
+                $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "SELECT * FROM categorie";
+                foreach($db->query($sql) as $row) {
+                      echo "<li id='" .$row['id']."' class='cat'><a href='#' >";
+                     // echo "<a href='categories.php?cat=" .$row['id']. "''>";
+                      echo $row['naam'];
+                      echo "</a></li>";
+                  }
+                  unset($row);
+              }
+
+                  showcategories();
+               ?>
+               
+
+
+              
             </div>
-            <div class="maincontent">
+            <div class="maincontent" id="maincontent">
