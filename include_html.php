@@ -2,7 +2,7 @@
 
     <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='nl' lang='nl'>
     <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" />
         <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
         <meta name="description" content="Blog application by Esmeralda Tijhoff" />  
         <meta name="keywords" content="" />
@@ -78,7 +78,7 @@
                   showcategories();
                ?>
                
-
+                </ul>
 
               
             </div>
