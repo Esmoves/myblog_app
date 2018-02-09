@@ -11,6 +11,7 @@ $db = new PDO("mysql:host=$dbServername;dbname=$dbname;charset=utf8mb4", $dbUser
   // set the PDO error mode to exception
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+
 // ******************************************************************//
 //*************************** General functions *********************//
 //*******************************************************************//
@@ -20,9 +21,26 @@ function getuserid(){
     // get user_id
     $username = $_SESSION['login_user'];
     $sql_user = "SELECT * FROM bloggers WHERE username = '$username'";
-    foreach($db->query($sql_user) as $user){
-      $user_id = $user['id'];
-    }  
+    $sth = $db->prepare($sql);
+    $sth->execute();
+    $row = $sth->fetch(PDO::FETCH_ASSOC);
+    $user_id = $row['id'];
+      return $user_id;  
+}
+
+function getusername($blog_id){
+   global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
+    $sql = "SELECT *, blogs.id 
+    FROM blogs 
+    JOIN bloggers
+    ON blogs.user_id = bloggers.id
+    WHERE blogs.id = '$blog_id'";
+    //// return first row
+    $sth = $db->prepare($sql);
+    $sth->execute();
+    $row = $sth->fetch(PDO::FETCH_ASSOC);
+    $blogger = $row['username'];
+    return $blogger;
 }
 
 
@@ -39,7 +57,7 @@ function showbloggers(){
   $sql = "SELECT * FROM bloggers";
   foreach($db->query($sql) as $row) {
         echo "<li>";
-        echo "<a href='bloggers.php?blogger=" .$row['id']. "''>";
+        echo "<a href='bloggers.php?blogger=" .$row['id']. "'>";
         echo $row['username'];
         echo "</a></li>";
     }
@@ -76,7 +94,7 @@ function showblogsbyblogger($blogger_id){
         echo "<tr><td class='tekst'>" . $link . $row['excerp']. "</a></td></tr>";
         echo "<tr><td class='category'><em>Category: ";
         
-        getCategory($row['category']);
+        getCategory($row['id']);
 
         echo "</em></td></tr>";
         echo "</table>";
@@ -91,22 +109,6 @@ function showblogsbyblogger($blogger_id){
 //*************************************************************************//
 //*************************************************************************//
 
-/*
-function showcategories(){
-  global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-  $sql = "SELECT * FROM categorie";
-  echo "<form id='cat' name='cat'>";
-  echo "<select name='category' onchange='showBlogCategory(this.categor)'>";
-  foreach($db->query($sql) as $row) {
-      echo "<option name='categor' value='" .$row['id']. "'>";
-      echo $row['naam'];
-      echo "</option>";
-    }
-    echo "</select></form>";
-    unset($row);
-  }
-
-*/
 
 // *************** Show the blogs of one categorie**************************//
 function welcomecategory($categorie_id){
@@ -164,11 +166,11 @@ function getAllBlogsFromDB(){
         }
 
         echo "<tr><td class='tekst'>" . $link . $row['excerp']. "</a></td></tr>";
-        echo "<tr><td class='category'><em>Category: ";
         
-        getCategory($row['category']);
-
+        echo "<tr><td class='category'><em>Category: ";
+        getCategory($blog_id);
         echo "</em></td></tr>";
+
         echo "</table>";
       }
       else { 
@@ -207,12 +209,18 @@ function getBloggerbyBlogid($user_id){
   unset($row);
 }
 
-function getCategory($category){
+function getCategory($blog_id){
    global $dbServername, $dbUsername, $dbPassword, $dbname, $db;
-    $sql = "SELECT * FROM categorie WHERE id='$category'";
+    $sql = "SELECT * FROM categorie 
+    INNER JOIN connectcatwithblog
+    ON categorie.id = connectcatwithblog.categorie_id
+    INNER JOIN blogs
+    ON connectcatwithblog.blog_id = blogs.id
+    WHERE connectcatwithblog.blog_id= '$blog_id'";
     foreach($db->query($sql) as $row) {
       $category = $row['naam'];
       echo $category;
+      echo " || ";
     }
     unset($row);
 }
@@ -227,8 +235,9 @@ function getOneBlogFromDB($blog_id){
         echo "<tr><th colspan='1'>" .$row['titel']. "<br />";
         getBloggerbyBlogid($row['user_id']);
         echo "</th</tr>";
+
         echo "<tr><td class='category'>categories: ";
-        getCategory($row['category']);
+        getCategory($row['id']);
         echo "</td></tr>";
 
         if(!empty($row['id_hoofdimg'])){
@@ -278,12 +287,13 @@ function insertcomment(){
     AND c.deleted = 'false'"; 
     
     foreach($db->query($sql) as $row) {
-
         echo "<tr><td>Comment</td>";
         echo "<td>" .$row['comment']. "</td></tr>";
        }
-       
-        if($row['closed'] == false){
+    $sth = $db->prepare($sql);
+    $sth->execute();
+    $row2 = $sth->fetch(PDO::FETCH_ASSOC);   
+    if($row2['closed'] == false){
         // show upload comment
         echo "<br />";
         echo '<form action="blog.php" method="post" name="comment" class="inputform">';
@@ -292,9 +302,9 @@ function insertcomment(){
         echo '<textarea class="excerp" type="text" name="comment"></textarea><br />';
         echo '<input type="submit" name="submit" value="send" />'; 
        }
+
        echo "</table>";
-      unset($row);
-      
+      unset($row);   
     }
 
 
@@ -357,9 +367,6 @@ function getBlogger($user_id){
     $sth->execute();
     $row = $sth->fetch(PDO::FETCH_ASSOC);
 
-    ////
-
-    // foreach($db->query($sql) as $row) {
       $user_id = $row['id'];
       $username = $row['username'];
       $firstname = $row['firstname'];
@@ -381,8 +388,6 @@ function getBlogger($user_id){
     $titel= $_POST['titel'];
     $tekst= $_POST['tekst'];
     $excerp= $_POST['excerp'];
-    $category= $_POST['category'];
-
     
     // get user_id
     $username = $_SESSION['login_user'];
@@ -423,10 +428,18 @@ function getBlogger($user_id){
       // start the actual upload section
       $sql = "INSERT INTO blogs ( user_id, titel, tekst, id_hoofdimg, excerp, category ) VALUES ( :user_id, :titel, :tekst, :id_hoofdimg, :excerp, :category)";
       $query = $db->prepare( $sql );
-      if( $query->execute( array(':user_id'=>$user_id, ':titel'=>$titel, ':tekst'=>$tekst, ':id_hoofdimg'=>$userpic, ':excerp'=>$excerp, 'category'=>$category ) ) )
+      if( $query->execute( array(':user_id'=>$user_id, ':titel'=>$titel, ':tekst'=>$tekst, ':id_hoofdimg'=>$userpic, ':excerp'=>$excerp, 'category'=>'' ) ) )
         {   
+          $last_id = $db->lastInsertId();
+          foreach($_POST['category'] as $value)
+           {
+            $sql2 = "INSERT INTO connectcatwithblog (blog_id, categorie_id) VALUES ($last_id, '$value')";
+            $sth = $db->prepare($sql2);
+            $sth->execute();
+           }
+
           echo "<script type= 'text/javascript'>alert('New Blog Inserted Successfully');</script>";
-          header('location: manageblogs.php');
+        //  header('location: manageblogs.php');
       }
       else{
         echo "<script type= 'text/javascript'>alert('Blog not successfully Inserted.');</script>";
