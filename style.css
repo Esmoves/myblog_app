@@ -171,21 +171,21 @@ table.excerp{
 	width: 500px;
 }
 
-.excerp th{
+th{
 	font-family: 'Roboto Mono', monospace;
 	color: #7A6563;
 	background-color: #7FD1B9;
 	padding-top: 10px;
 }
 
-.excerp tr{
+tr{
 	width: 80%;
 	border-width: 2px;
 	border-style: solid;
 	border-color: #7A6563;
 }
 
-.excerp td{
+td{
 	padding: 20px;
 }
 
@@ -207,23 +207,37 @@ table.data{
 	font-size: 0.8em;
 }
 
-form.newblog label{
+table.comments{
+	background-color: darkgrey;
+	border-collapse: collapse;
+	border: 2px solid #7A6563;
+	border-radius: 10px;
+	margin-top: 30px;
+	width: 500px;
+}
+
+.comments th{
+	background-color: grey;
+	color: black;
+}
+
+label{
 	border: 1px solid black;
+	background-color: darkgrey;
 }
-form.newblog input{
+input{
 	width: 80%;
 }
 
-form.newblog textarea.excerp{
-	width: 80%;
-	height: 100px;
-}
-
-form.newblog textarea{
+textarea{
 	width: 80%;
 	height: 400px;
 }
 
+textarea.excerp{
+	width: 80%;
+	height: 100px;
+}
 
 input[type=submit]{
 	width: 200px;
@@ -232,6 +246,14 @@ input[type=submit]{
 	font-variant: small-caps;
 }
 
+.inputform{
+	margin-top: 30px;
+}
+.inputform textarea{
+	width: 100%;
+}
+
 .footer{
 	clear: both;
 }
+
